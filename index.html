@@ -13,6 +13,8 @@
 <body>
     <div id="app">
 
+        
+
         <!-- basket -->
         <article :class="cart.length > 0 ? 'basket' : 'disabled-basket'" @click="togglePage">
             <span class="fa fa-shopping-basket"></span>
@@ -91,7 +93,7 @@
                 <div class="input-group">
                     <label for="name">Enter your phone number:</label>
                     <input v-model="phone" type="text" placeholder="07461598621">
-                    <p>Once you are happy with your order please hit the checkout button to prodceed</p>
+                    <p>Once you are happy with your order please hit the checkout button to prodceed and your details will be printed out</p>
                 </div>
 
                 <button :class="canCheckout ? 'checkout-btn' : 'disabled-checkout-btn'" @click="checkout">Checkout</button>
