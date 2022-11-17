@@ -31,8 +31,8 @@
                 </select>
 
                 <select v-model="sortOrder">
-                    <option value="asc">ASC</option>
-                    <option value="desc">DESC</option>
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
                 </select>
             </section>
 
@@ -171,8 +171,8 @@
                     return this.courses.sort((a,b) => (a[this.sortBy] > b[this.sortBy]) ? -1 : ((b[this.sortBy] > a[this.sortBy]) ? 1 : 0));
                 },
                 canCheckout: function () {
-                    let isNameCorrect = /^[a-zA-Z\s]*$/.test(this.name);   // regex is used to check if name contains letters only
-                    let isPhoneCorrect = /^[0-9]+$/.test(this.phone) && this.phone.length > 5;   // regex is used to check if phone contains number only AND it has more than 5 digits
+                    let isNameCorrect = /^[a-zA-Z\s]*$/.test(this.name);   // expression is used to check if name contains letters only
+                    let isPhoneCorrect = /^[0-9]+$/.test(this.phone) && this.phone.length > 5;   // expression is used to check if phone contains number only AND it has more than 5 digits
                     return isNameCorrect && isPhoneCorrect;
                 }
             }
