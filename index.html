@@ -90,7 +90,8 @@
                 </div>
                 <div class="input-group">
                     <label for="name">Enter your phone number:</label>
-                    <input v-model="phone" type="text" placeholder="123456789">
+                    <input v-model="phone" type="text" placeholder="07461598621">
+                    <p>Once you are happy with your order please hit the checkout button to prodceed</p>
                 </div>
 
                 <button :class="canCheckout ? 'checkout-btn' : 'disabled-checkout-btn'" @click="checkout">Checkout</button>
