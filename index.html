@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Coursework</title>
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- basket -->
+        <article :class="cart.length > 0 ? 'basket' : 'disabled-basket'" @click="togglePage">
+            <span class="fa fa-shopping-basket"></span>
+            <span>{{ cart.length }}</span>
+        </article>
+
+        <!-- courses page -->
+        <section v-if="activePage === 'courses'">
+            <!-- Sorting section -->
+            <section class="sorting-section">
+                <select v-model="sortBy">
+                    <option value="title">Title</option>
+                    <option value="loc">Location</option>
+                    <option value="price">Price</option>
+                    <option value="spaces">Spaces</option>
+                </select>
+
+                <select v-model="sortOrder">
+                    <option value="asc">ASC</option>
+                    <option value="desc">DESC</option>
+                </select>
+            </section>
+
+            <!-- courses section-->
+            <section class="courses-section">
+                <!-- individual course item -->
+                <article v-for="(course, index) in sortedCourses" :key="course.id" class="course">
+                    <div class="course-left">
+                        <img :src="course.image" class="course-image" />
+                        <h1 class="course-title">{{ course.title }}</h1>
+                        <button :class="course.spaces === 0 ? 'disabled-purchase-btn' : 'purchase-btn'"
+                            @click="purchaseCourse(course, index)">Purchase Course</button>
+                    </div>
+                    <div class="course-right">
+                        <p class="course-description" v-html="course.description"></p>
+                        <p>
+                            <span class="fa fa-map-marker"></span>
+                            <span>{{ course.loc }}</span>
+                        </p>
+                        <p>
+                            <span class="fa fa-money"></span>
+                            <span>{{ course.price }}</span>
+                        </p>
+                        <p>
+                            <span class="fa fa-users"></span>
+                            <span>{{ course.spaces }}</span>
+                        </p>
+                        <p v-if="course.spaces === 0">Out of stock more will come</p>
+                        <p v-else-if="course.spaces < 5">Only {{ course.spaces }} left!</p>
+                        <p v-else>Hurry buy your lessons now!</p>
+                    </div>
+                </article>
+            </section>
+        </section>
+
+        <!-- checkout page -->
+        <section v-else>
+            <h1>Happy Shopping!</h1>
+
+            <!-- cart container -->
+            <article class="cart-container">
+                <h3>Items in Cart</h3>
+                <!-- courses user has added in cart -->
+                <div class="cart-item" v-for="(item, index) in cart" :key="item.key">
+                    <h1>{{ item.title }}</h1>
+                    <span class="fa fa-trash-o" @click="removeFromCart(item, index)"></span>
+                </div>
+            </article>
+
+            <!-- checkout section -->
+            <article class="checkout-container">
+                <div class="input-group">
+                    <label for="name">Enter your name:</label>
+                    <input v-model="name" type="text" placeholder="John Doe.">
+                </div>
+                <div class="input-group">
+                    <label for="name">Enter your phone number:</label>
+                    <input v-model="phone" type="text" placeholder="123456789">
+                </div>
+
+                <button :class="canCheckout ? 'checkout-btn' : 'disabled-checkout-btn'" @click="checkout">Checkout</button>
+
+                <pre v-if="showCheckoutMessage">
+                    <span>Thank you for shopping!!!</span>
+                    <span>Name: {{ name }}</span>
+                    <span>Phone: {{ phone }}</span>
+                </pre>
+            </article>
+        </section>
+    </div>
+
+    <!-- scripts needed for the app -->
+    <!-- import file having courses information -->
+    <script src="courses.js"></script>
+
+    <!-- CDN link to vue -->
+    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+
+    <!-- VUE app -->
+    <script>
+        let webstore = new Vue({
+            el: "#app",
+            data: {
+                courses: courses,
+                sortBy: 'title',
+                sortOrder: 'asc',
+                cart: [],
+                activePage: 'courses',
+                name: '',
+                phone: '',
+                showCheckoutMessage: false
+            },
+            methods: {
+                togglePage() {
+                    if (this.activePage === 'courses') {
+                        this.activePage = 'checkout'
+                    }
+                    else {
+                        this.activePage = 'courses'
+                    }
+                },
+                purchaseCourse(course, index) {
+                    let targetCourse = this.courses[index];
+
+                    targetCourse.spaces--;   // reduce a space from the target course
+
+                    // push the purchased course into the cart
+                    this.cart.push(targetCourse);
+                },
+                removeFromCart(course, indexInCart) {
+                    let index = this.courses.findIndex(item => item.id === course.id);  // getting the index of the course in courses array
+
+                    let targetCourse = this.courses[index];
+
+                    targetCourse.spaces++;   // increase a space from the target course
+
+                    // remove the item from cart
+                    this.cart.splice(indexInCart, 1);
+
+                    // if user kept on deleting items and cart get empty, redirect user to courses page
+                    if(this.cart.length === 0){
+                        this.activePage = 'courses';
+                    }
+                },
+                checkout() {
+                    this.showCheckoutMessage = true;
+                }
+            },
+            computed: {
+                sortedCourses: function () {
+                    // if sorting in ascending order
+                    if (this.sortOrder === 'asc') {
+                        return this.courses.sort((a,b) => (a[this.sortBy] > b[this.sortBy]) ? 1 : ((b[this.sortBy] > a[this.sortBy]) ? -1 : 0));
+                    }
+                    // if sorting in descending order
+                    return this.courses.sort((a,b) => (a[this.sortBy] > b[this.sortBy]) ? -1 : ((b[this.sortBy] > a[this.sortBy]) ? 1 : 0));
+                },
+                canCheckout: function () {
+                    let isNameCorrect = /^[a-zA-Z\s]*$/.test(this.name);   // regex is used to check if name contains letters only
+                    let isPhoneCorrect = /^[0-9]+$/.test(this.phone) && this.phone.length > 5;   // regex is used to check if phone contains number only AND it has more than 5 digits
+                    return isNameCorrect && isPhoneCorrect;
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
