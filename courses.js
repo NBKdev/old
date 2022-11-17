@@ -2,7 +2,7 @@ let courses = [{
     id: 1001,
     title: "Japanese Lesson",
     description: "Japanese lessons tought by <em>professional</em> Japanese speakers!",
-    price: "£25",
+    price: "£20",
     loc: "Central London",
     spaces: 5,
     image: "assets/japanese.png"
