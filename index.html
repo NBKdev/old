@@ -172,7 +172,7 @@
                 },
                 canCheckout: function () {
                     let isNameCorrect = /^[a-zA-Z\s]*$/.test(this.name);   // expression is used to check if name contains letters only
-                    let isPhoneCorrect = /^[0-9]+$/.test(this.phone) && this.phone.length > 5;   // expression is used to check if phone contains number only from 11 digits as a United Kingdom number
+                    let isPhoneCorrect = /^[0-9]+$/.test(this.phone) && this.phone.length > 10;   // expression is used to check if phone contains number only from 11 digits as a United Kingdom number
                     return isNameCorrect && isPhoneCorrect;
                 }
             }
